@@ -36,6 +36,11 @@
       outline: none;
     }
 
+    .button-container {
+      display: flex;
+      gap: 15px;
+    }
+
     button {
       padding: 10px 20px;
       font-size: 1rem;
@@ -77,6 +82,9 @@
 <body>
   <h1>Mohamed Rashad</h1>
   <input type="password" id="password" placeholder="Enter Password">
-  <button onclick="checkPassword()">Enter</button>
+  <div class="button-container">
+    <button onclick="checkPassword()">Enter</button>
+    <button onclick="window.location.href='https://t.me/H_R_Z8'">Get Password</button>
+  </div>
 </body>
 </html>
