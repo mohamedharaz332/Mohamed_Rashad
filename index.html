@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Mohamed Rashad</title>
   <style>
+    :root {
+      --color-red: #ff4136;
+      --color-green: #2ecc40;
+      --color-yellow: #ffdc00;
+      --color-black: #000;
+    }
+
     body {
       margin: 0;
       padding: 0;
@@ -13,78 +20,214 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: #000;
-      color: #0f0;
+      background: var(--color-black);
       font-family: 'Courier New', Courier, monospace;
+      overflow: hidden;
     }
 
-    h1 {
+    .name-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+      height: 70px;
+      overflow: hidden;
+    }
+
+    .name-letter {
       font-size: 3rem;
-      text-align: center;
-      text-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 0 20px #0f0, 0 0 40px #00ff00;
-      animation: flicker 1.5s infinite alternate;
+      font-weight: bold;
+      margin: 0 3px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+      display: inline-block;
+      position: relative;
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      font-weight: bold;
+      font-size: 3rem;
+      animation: blink 0.7s infinite;
+      margin-left: 5px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .glitch-animation {
+      animation: 
+        color-cycle 2s infinite alternate,
+        subtle-glitch 0.5s infinite alternate;
+    }
+
+    @keyframes color-cycle {
+      0% { color: var(--color-red); }
+      33% { color: var(--color-green); }
+      66% { color: var(--color-yellow); }
+      100% { color: var(--color-red); }
+    }
+
+    @keyframes subtle-glitch {
+      0% { transform: translate(-1px, -1px); }
+      25% { transform: translate(1px, 2px); }
+      50% { transform: translate(-2px, 1px); }
+      75% { transform: translate(2px, -1px); }
+      100% { transform: translate(0); }
     }
 
     input[type="password"] {
       padding: 10px;
       font-size: 1rem;
       margin: 20px 0;
-      border: 2px solid #0f0;
+      border: 2px solid var(--color-green);
       border-radius: 5px;
-      background: #000;
-      color: #0f0;
+      background: var(--color-black);
+      color: var(--color-green);
       outline: none;
+      width: 250px;
+      transition: all 0.3s ease;
+      opacity: 0;
     }
 
     .button-container {
       display: flex;
       gap: 15px;
+      opacity: 0;
     }
 
     button {
       padding: 10px 20px;
       font-size: 1rem;
-      color: #000;
-      background: #0f0;
+      color: var(--color-black);
+      background: var(--color-green);
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    button:hover {
-      background: #00ff00;
+    button:nth-child(2) {
+      background: var(--color-yellow);
     }
 
-    @keyframes flicker {
-      0% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.8;
-      }
-      100% {
-        opacity: 1;
-      }
+    .error-message {
+      color: var(--color-red);
+      margin-top: 10px;
+      text-shadow: 0 0 5px var(--color-red);
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
   </style>
-  <script>
-    function checkPassword() {
-      const password = document.getElementById("password").value;
-      if (password === "Haraz66") {
-        window.location.href = "coming-soon.html";
-      } else {
-        alert("Incorrect password. Please try again.");
-      }
-    }
-  </script>
 </head>
 <body>
-  <h1>Mohamed Rashad</h1>
+  <!-- Animated Name -->
+  <div class="name-container" id="name-container">
+    <span class="typing-cursor">|</span>
+  </div>
+
+  <!-- Password Input -->
   <input type="password" id="password" placeholder="Enter Password">
+  <div id="error-container" class="error-message"></div>
   <div class="button-container">
     <button onclick="checkPassword()">Enter</button>
     <button onclick="window.location.href='https://t.me/H_R_Z8'">Get Password</button>
   </div>
+
+  <script>
+    const name = "Mohamed Rashad";
+    const nameContainer = document.getElementById('name-container');
+    const passwordInput = document.getElementById('password');
+    const buttonContainer = document.querySelector('.button-container');
+    const typingCursor = document.querySelector('.typing-cursor');
+
+    function typeWriter(text, speed = 100) {
+      let i = 0;
+      
+      function type() {
+        if (i < text.length) {
+          const span = document.createElement('span');
+          span.className = 'name-letter glitch-animation';
+          span.textContent = text.charAt(i);
+          
+          // Add space between first and last name
+          if (text.charAt(i) === ' ') {
+            span.style.width = '20px';
+          }
+          
+          // Insert before cursor
+          nameContainer.insertBefore(span, typingCursor);
+          
+          // Animate letter appearance
+          setTimeout(() => {
+            span.style.opacity = '1';
+            span.style.transform = 'translateY(0)';
+          }, 50);
+
+          i++;
+          setTimeout(type, speed);
+        } else {
+          // After typing is complete
+          typingCursor.style.opacity = '0';
+          
+          // Reveal password input and buttons
+          setTimeout(() => {
+            passwordInput.style.opacity = '1';
+            buttonContainer.style.opacity = '1';
+          }, 500);
+        }
+      }
+      
+      type();
+    }
+
+    // Start typing effect when page loads
+    window.addEventListener('load', () => {
+      // Show cursor first
+      typingCursor.style.opacity = '1';
+      
+      // Start typing after a short delay
+      setTimeout(() => {
+        typeWriter(name);
+      }, 1000);
+    });
+
+    function checkPassword() {
+      const password = passwordInput.value;
+      const errorContainer = document.getElementById("error-container");
+      
+      if (password === "Haraz66") {
+        window.location.href = "coming-soon.html";
+      } else {
+        errorContainer.textContent = "Incorrect password. Access denied.";
+        errorContainer.style.opacity = "1";
+        
+        // Shake input on incorrect password
+        passwordInput.style.animation = "none";
+        setTimeout(() => {
+          passwordInput.style.animation = "subtle-glitch 0.3s";
+        }, 10);
+        
+        // Hide error after 3 seconds
+        setTimeout(() => {
+          errorContainer.style.opacity = "0";
+          passwordInput.style.animation = "none";
+        }, 3000);
+      }
+    }
+
+    // Add keyboard support
+    passwordInput.addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        checkPassword();
+      }
+    });
+  </script>
 </body>
 </html>
